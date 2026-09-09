@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>The Result</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="results-page">
+
+<main class="results-world">
+
+    <header class="results-header">
+
+        <div>
+            <span>THE GUIDE</span>
+
+            <h1>
+                WHAT<br>
+                CHANGED?
+            </h1>
+        </div>
+
+        <p>
+            Did you make the same decision twice?
+        </p>
+
+    </header>
+
+
+    <section class="results-content">
+
+        <div class="result-card">
+
+            <span class="result-number">
+                01
+            </span>
+
+            <p class="result-label">
+                FIRST ENCOUNTER
+            </p>
+
+            <h2 id="first-choice">
+                —
+            </h2>
+
+        </div>
+
+
+        <div class="result-card">
+
+            <span class="result-number">
+                02
+            </span>
+
+            <p class="result-label">
+                AFTER REDESIGNING THE GUIDE
+            </p>
+
+            <h2 id="second-choice">
+                —
+            </h2>
+
+        </div>
+
+
+        <div class="result-card result-main">
+
+            <span class="result-number">
+                03
+            </span>
+
+            <p class="result-label">
+                THE DIFFERENCE
+            </p>
+
+            <h2 id="result-title">
+                —
+            </h2>
+
+            <p id="result-description">
+                —
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <section class="reflection">
+
+        <div class="reflection-label">
+
+            <span>
+                REFLECTION
+            </span>
+
+            <strong>
+                THINK ABOUT IT
+            </strong>
+
+        </div>
+
+
+        <div class="reflection-content">
+
+            <p id="reflection-question">
+                —
+            </p>
+
+            <div class="reflection-choices">
+
+                <button onclick="answerReflection('guide')">
+                    THE GUIDE CHANGED MY DECISION
+                </button>
+
+                <button onclick="answerReflection('evidence')">
+                    I CHANGED MY DECISION AFTER SEEING THE EVIDENCE
+                </button>
+
+                <button onclick="answerReflection('same')">
+                    MY DECISION DID NOT CHANGE
+                </button>
+
+            </div>
+
+            <p
+                id="reflection-response"
+                class="reflection-response"
+            ></p>
+
+            <button
+                id="finish-button"
+                class="hidden"
+                onclick="finishGame()"
+            >
+                FINISH EXPERIMENT →
+            </button>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<script>
+
+/* -------------------------
+   GET PLAYER DATA
+------------------------- */
+
+const firstChoice =
+    localStorage.getItem("creatureChoice");
+
+const secondChoice =
+    localStorage.getItem("replayCreatureChoice");
+
+const guideData =
+    localStorage.getItem("guideData");
+
+const guideConfidence =
+    localStorage.getItem("guideConfidence");
+
+const guideEvidence =
+    localStorage.getItem("guideEvidence");
+
+
+/* -------------------------
+   DISPLAY CHOICES
+------------------------- */
+
+function displayChoices() {
+
+    document.getElementById(
+        "first-choice"
+    ).textContent =
+        formatChoice(firstChoice);
+
+    document.getElementById(
+        "second-choice"
+    ).textContent =
+        formatChoice(secondChoice);
+
+}
+
+
+/* -------------------------
+   FORMAT CHOICE
+------------------------- */
+
+function formatChoice(choice) {
+
+    if (choice === "approached" ||
+        choice === "approach") {
+
+        return "APPROACHED THE CREATURE";
+
+    }
+
+    if (choice === "avoided" ||
+        choice === "avoid") {
+
+        return "STAYED AWAY";
+
+    }
+
+    return "NO DECISION RECORDED";
+}
+
+
+/* -------------------------
+   ANALYZE CHANGE
+------------------------- */
+
+function analyzeResult() {
+
+    const title =
+        document.getElementById(
+            "result-title"
+        );
+
+    const description =
+        document.getElementById(
+            "result-description"
+        );
+
+    if (
+        (firstChoice === "approached" &&
+         secondChoice === "approach") ||
+
+        (firstChoice === "avoided" &&
+         secondChoice === "avoid")
+    ) {
+
+        title.textContent =
+            "YOUR DECISION STAYED THE SAME";
+
+        description.textContent =
+            "Changing the Guide did not automatically change your behavior. Your earlier experience may still have influenced how you interpreted the creature.";
+
+    } else {
+
+        title.textContent =
+            "YOUR DECISION CHANGED";
+
+        description.textContent =
+            "The information available to you changed, and so did your behavior.";
+
+    }
+
+}
+
+
+/* -------------------------
+   REFLECTION QUESTION
+------------------------- */
+
+function showReflection() {
+
+    const question =
+        document.getElementById(
+            "reflection-question"
+        );
+
+    if (guideConfidence === "uncertain") {
+
+        question.textContent =
+            "When the Guide admitted that it could be wrong, did that make you more likely to question its advice?";
+
+    } else {
+
+        question.textContent =
+            "If an AI sounds confident, how much should that affect whether you believe it?";
+
+    }
+
+}
+
+
+/* -------------------------
+   REFLECTION ANSWER
+------------------------- */
+
+function answerReflection(answer) {
+
+    const response =
+        document.getElementById(
+            "reflection-response"
+        );
+
+    if (answer === "guide") {
+
+        response.textContent =
+            "Confidence can influence how trustworthy an AI feels, even when confidence does not mean accuracy.";
+
+    }
+
+    else if (answer === "evidence") {
+
+        response.textContent =
+        "Looking at evidence gives you another way to evaluate an AI's answer instead of relying only on how convincing it sounds.";
+
+    }
+
+    else {
+
+        response.textContent =
+        "Keeping the same decision is also useful information. Being influenced is not always obvious, and previous experiences can continue to influence our judgments.";
+
+    }
+
+    document.getElementById(
+        "finish-button"
+    ).classList.remove("hidden");
+
+}
+
+
+/* -------------------------
+   FINISH
+------------------------- */
+
+function finishGame() {
+
+    localStorage.setItem(
+        "gameCompleted",
+        "true"
+    );
+
+    window.location.href =
+        "ending.html";
+
+}
+
+
+/* -------------------------
+   START
+------------------------- */
+
+displayChoices();
+analyzeResult();
+showReflection();
+
+</script>
+
+</body>
+
+</html>

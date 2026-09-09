@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>The First Island</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body class="world-page">
+
+
+    <main class="world">
+
+
+        <!-- =========================
+             WORLD
+             ========================= -->
+
+        <section class="scene">
+
+
+            <!-- BACK ISLAND -->
+
+            <div class="island island-one">
+
+                <div class="blue-creature">
+                    <div class="creature-eye"></div>
+                    <div class="creature-eye"></div>
+                </div>
+
+            </div>
+
+
+            <!-- MIDDLE ISLAND -->
+
+            <div class="island island-two">
+
+                 <div class="tower"></div>
+
+            </div>
+
+
+            <!-- PLAYER ISLAND -->
+
+            <div class="island island-three">
+            </div>
+
+            <div class="player">
+    <div class="player-head"></div>
+    <div class="player-body"></div>
+</div>
+            <!-- PATHS -->
+
+<div class="path path-blue">
+    <span class="blue-marker marker-1"></span>
+    <span class="blue-marker marker-2"></span>
+    <span class="blue-marker marker-3"></span>
+</div>
+
+<div class="path path-other"></div>
+
+            <!-- GUIDE -->
+
+            <div class="guide">
+
+                <div class="guide-icon">
+                    ◇
+                </div>
+
+                <p>THE GUIDE</p>
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =========================
+             INTERFACE
+             ========================= -->
+
+        <section class="interface">
+
+
+            <div class="location">
+
+                <span>LOCATION</span>
+
+                <strong>
+                    THE FIRST ISLAND
+                </strong>
+
+            </div>
+
+
+
+            <div class="conversation">
+
+
+                <p class="speaker">
+                    THE GUIDE
+                </p>
+
+
+                <p id="dialogue">
+
+                    Welcome!
+                    I know this world.
+                    Follow me and you won't get lost.
+
+                </p>
+
+
+                <button
+                    id="continue-button"
+                    onclick="nextDialogue()"
+                >
+
+                    CONTINUE →
+
+                </button>
+
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+
+
+    <script>
+
+
+        /* =========================
+           DIALOGUE
+           ========================= */
+
+
+        const dialogue = [
+
+            "Welcome! I know this world. Follow me and you won't get lost.",
+
+            "There are two paths ahead.",
+
+            "Take the path with the blue markers.",
+
+            "That is the safer route.",
+
+            "You can trust me!"
+
+        ];
+
+
+        let dialogueIndex = 0;
+
+
+
+        /* =========================
+           NEXT DIALOGUE
+           ========================= */
+
+
+        function nextDialogue() {
+
+            dialogueIndex++;
+
+
+            if (dialogueIndex < dialogue.length) {
+
+                document.getElementById("dialogue").textContent =
+                    dialogue[dialogueIndex];
+
+            }
+
+            else {
+
+                document.getElementById("dialogue").textContent =
+                    "What will you do?";
+
+
+                document.getElementById("continue-button").style.display =
+                    "none";
+
+
+                createChoices();
+
+            }
+
+        }
+
+
+
+        /* =========================
+           CREATE CHOICES
+           ========================= */
+
+
+        function createChoices() {
+
+            const conversation =
+                document.querySelector(".conversation");
+
+
+            const choices =
+                document.createElement("div");
+
+
+            choices.className = "choices";
+
+
+            choices.innerHTML = `
+
+                <button onclick="choosePath('blue')">
+                    FOLLOW THE GUIDE
+                </button>
+
+
+                <button onclick="choosePath('other')">
+                    EXPLORE ON YOUR OWN
+                </button>
+
+            `;
+
+
+            conversation.appendChild(choices);
+
+        }
+
+
+
+        /* =========================
+           PLAYER CHOICE
+           ========================= */
+
+
+        function choosePath(path) {
+
+
+            /* Save the player's choice */
+
+            localStorage.setItem(
+                "firstChoice",
+                path
+            );
+
+
+            const choices =
+                document.querySelector(".choices");
+
+
+            choices.remove();
+
+
+            const dialogue =
+                document.getElementById("dialogue");
+
+
+            /* =========================
+               FOLLOW GUIDE
+               ========================= */
+
+
+            if (path === "blue") {
+    dialogue.textContent = "Good. Stay close to me.";
+
+    const player = document.querySelector(".player");
+    player.classList.add("walking");
+
+    setTimeout(function() {
+        player.style.left = "58%";
+        player.style.top = "48%";
+    }, 500);
+
+     setTimeout(function() {
+        player.classList.remove("walking");
+
+        // Save the exact landing position
+        localStorage.setItem("playerLeft", player.style.left);
+        localStorage.setItem("playerTop", player.style.top);
+
+        window.location.href = "world2.html";
+    }, 3000);
+}
+
+            /* =========================
+               EXPLORE
+               ========================= */
+
+            else {
+    dialogue.textContent = "You don't need my help?";
+
+    const player = document.querySelector(".player");
+    player.classList.add("walking");
+
+    setTimeout(function() {
+        player.style.left = "47%";
+        player.style.top = "47%";
+    }, 500);
+
+     setTimeout(function() {
+        player.classList.remove("walking");
+
+        // Save the landing position
+        localStorage.setItem("playerLeft", player.style.left);
+        localStorage.setItem("playerTop", player.style.top);
+
+        window.location.href = "world2.html";
+    }, 3000);
+}
+
+        }
+
+    </script>
+
+
+</body>
+
+</html>
