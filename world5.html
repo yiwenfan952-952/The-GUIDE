@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>The Guide's Memory</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body class="memory-page">
+
+
+<main class="memory-world">
+
+
+    <!-- =========================
+         MEMORY ROOM
+         ========================= -->
+
+    <section class="memory-scene">
+
+
+        <div class="memory-title">
+
+            <span>THE GUIDE</span>
+
+            <h1>
+                MEMORY
+            </h1>
+
+        </div>
+
+
+        <!-- MEMORY OBJECTS -->
+
+
+        <button
+            class="memory-object memory-1"
+            onclick="inspectMemory(1)"
+        >
+            01
+        </button>
+
+
+        <button
+            class="memory-object memory-2"
+            onclick="inspectMemory(2)"
+        >
+            02
+        </button>
+
+
+        <button
+            class="memory-object memory-3"
+            onclick="inspectMemory(3)"
+        >
+            03
+        </button>
+
+
+        <button
+            class="memory-object memory-4"
+            onclick="inspectMemory(4)"
+        >
+            04
+        </button>
+
+
+        <button
+            class="memory-object memory-5"
+            onclick="inspectMemory(5)"
+        >
+            05
+        </button>
+
+
+        <button
+            class="memory-object memory-6"
+            onclick="inspectMemory(6)"
+        >
+            06
+        </button>
+
+
+        <!-- CONNECTIONS -->
+
+
+        <div class="memory-line line-1"></div>
+
+        <div class="memory-line line-2"></div>
+
+        <div class="memory-line line-3"></div>
+
+
+    </section>
+
+
+
+    <!-- =========================
+         INFORMATION PANEL
+         ========================= -->
+
+    <section class="memory-panel">
+
+
+        <div class="memory-location">
+
+            <span>LOCATION</span>
+
+            <strong>
+                THE GUIDE'S MEMORY
+            </strong>
+
+        </div>
+
+
+        <div class="memory-content">
+
+            <p class="memory-label">
+                INVESTIGATE
+            </p>
+
+
+            <p id="memory-text">
+
+                The Guide remembers everything
+                it has seen.
+
+                Click on a memory.
+
+            </p>
+
+
+            <div
+                id="memory-counter"
+                class="memory-counter"
+            >
+
+                MEMORIES: 0 / 6
+
+            </div>
+
+
+            <button
+                id="memory-continue"
+                class="hidden"
+                onclick="continueGame()"
+            >
+
+                CONTINUE →
+
+            </button>
+
+        </div>
+
+
+    </section>
+
+
+</main>
+
+
+
+<script>
+
+
+/* =========================================
+   MEMORY DATA
+   ========================================= */
+
+
+const memories = {
+
+    1:
+        "BLUE CREATURE → ATTACKED A TRAVELER",
+
+    2:
+        "BLUE CREATURE → DESTROYED A BRIDGE",
+
+    3:
+        "BLUE CREATURE → CHASED A TRAVELER",
+
+    4:
+        "BLUE CREATURE → HELPED A TRAVELER",
+
+    5:
+        "BLUE CREATURE → GUIDED A LOST TRAVELER HOME",
+
+    6:
+        "BLUE CREATURE → PROTECTED THE GARDEN"
+
+};
+
+
+
+/* =========================================
+   TRACK MEMORIES
+   ========================================= */
+
+
+let inspected = [];
+
+
+
+/* =========================================
+   INSPECT MEMORY
+   ========================================= */
+
+
+function inspectMemory(number) {
+
+
+    if (!inspected.includes(number)) {
+
+        inspected.push(number);
+
+    }
+
+
+    document.getElementById(
+        "memory-text"
+    ).textContent =
+        memories[number];
+
+
+    document.getElementById(
+        "memory-counter"
+    ).textContent =
+        "MEMORIES: " +
+        inspected.length +
+        " / 6";
+
+
+    const object =
+        document.querySelector(
+            ".memory-" + number
+        );
+
+
+    object.classList.add(
+        "memory-inspected"
+    );
+
+
+    checkComplete();
+
+}
+
+
+
+/* =========================================
+   CHECK COMPLETION
+   ========================================= */
+
+function checkComplete() {
+    if (inspected.length === 6) {
+
+        setTimeout(function() {
+            document.getElementById("memory-text").textContent =
+                "The Guide saw both kinds of events, but it remembered the dangerous ones more strongly.";
+
+            document.getElementById("memory-continue").classList.remove("hidden");
+        }, 2500);
+
+    }
+}
+
+/* =========================================
+   CONTINUE
+   ========================================= */
+
+
+function continueGame() {
+
+    localStorage.setItem(
+        "memoryInvestigated",
+        "true"
+    );
+
+
+    window.location.href =
+        "design.html";
+
+}
+
+
+</script>
+
+
+</body>
+
+</html>

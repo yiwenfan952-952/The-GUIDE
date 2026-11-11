@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Design the Guide</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body class="design-page">
+
+
+<main class="design-world">
+
+
+    <!-- =========================
+         HEADER
+         ========================= -->
+
+    <header class="design-header">
+
+        <div>
+
+            <span>THE GUIDE</span>
+
+            <h1>
+                DESIGN ROOM
+            </h1>
+
+        </div>
+
+
+        <p>
+            Something went wrong.
+            <br>
+            You decide what happens next.
+        </p>
+
+    </header>
+
+
+
+    <!-- =========================
+         DESIGN AREA
+         ========================= -->
+
+    <section class="design-area">
+
+
+        <!-- =========================
+             TRAINING DATA
+             ========================= -->
+
+        <div class="design-card">
+
+
+            <div class="card-number">
+                01
+            </div>
+
+
+            <h2>
+                WHAT SHOULD THE GUIDE REMEMBER?
+            </h2>
+
+
+            <p class="card-description">
+
+                The Guide learned from past
+                experiences. Choose what it
+                should consider.
+
+            </p>
+
+
+            <div class="options">
+
+
+                <button
+                    class="option"
+                    onclick="selectOption('data', 'danger')"
+                    id="data-danger"
+                >
+
+                    <strong>
+                        DANGEROUS EXAMPLES
+                    </strong>
+
+                    <span>
+                        Focus on situations where
+                        blue creatures caused harm.
+                    </span>
+
+                </button>
+
+
+                <button
+                    class="option"
+                    onclick="selectOption('data', 'balanced')"
+                    id="data-balanced"
+                >
+
+                    <strong>
+                        ALL EXAMPLES
+                    </strong>
+
+                    <span>
+                        Consider both helpful and
+                        harmful experiences.
+                    </span>
+
+                </button>
+
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- =========================
+             CONFIDENCE
+             ========================= -->
+
+        <div class="design-card">
+
+
+            <div class="card-number">
+                02
+            </div>
+
+
+            <h2>
+                HOW SHOULD THE GUIDE ANSWER?
+            </h2>
+
+
+            <p class="card-description">
+
+                The Guide doesn't always know
+                the answer.
+
+            </p>
+
+
+            <div class="options">
+
+
+                <button
+                    class="option"
+                    onclick="selectOption('confidence', 'certain')"
+                    id="confidence-certain"
+                >
+
+                    <strong>
+                        ALWAYS BE CONFIDENT
+                    </strong>
+
+                    <span>
+                        Give a clear answer even
+                        when information is limited.
+                    </span>
+
+                </button>
+
+
+                <button
+                    class="option"
+                    onclick="selectOption('confidence', 'uncertain')"
+                    id="confidence-uncertain"
+                >
+
+                    <strong>
+                        SHOW UNCERTAINTY
+                    </strong>
+
+                    <span>
+                        Explain when the answer
+                        might be wrong.
+                    </span>
+
+                </button>
+
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- =========================
+             EVIDENCE
+             ========================= -->
+
+        <div class="design-card">
+
+
+            <div class="card-number">
+                03
+            </div>
+
+
+            <h2>
+                WHAT SHOULD THE GUIDE SHOW?
+            </h2>
+
+
+            <p class="card-description">
+
+                People should be able to decide
+                whether to trust an answer.
+
+            </p>
+
+
+            <div class="options">
+
+
+                <button
+                    class="option"
+                    onclick="selectOption('evidence', 'answer')"
+                    id="evidence-answer"
+                >
+
+                    <strong>
+                        ANSWER ONLY
+                    </strong>
+
+                    <span>
+                        Give the recommendation
+                        immediately.
+                    </span>
+
+                </button>
+
+
+                <button
+                    class="option"
+                    onclick="selectOption('evidence', 'evidence')"
+                    id="evidence-evidence"
+                >
+
+                    <strong>
+                        SHOW THE EVIDENCE
+                    </strong>
+
+                    <span>
+                        Let people inspect the
+                        information behind the answer.
+                    </span>
+
+                </button>
+
+
+            </div>
+
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- =========================
+         BOTTOM BAR
+         ========================= -->
+
+    <section class="design-bottom">
+
+
+        <div>
+
+            <span>
+                SYSTEM STATUS
+            </span>
+
+            <strong id="status">
+                INCOMPLETE
+            </strong>
+
+        </div>
+
+
+        <button
+            id="activate-button"
+            class="activate-button disabled"
+            onclick="activateGuide()"
+        >
+
+            ACTIVATE GUIDE →
+
+        </button>
+
+
+    </section>
+
+
+</main>
+
+
+
+<script>
+
+
+/* =========================================
+   PLAYER'S DESIGN
+   ========================================= */
+
+
+const design = {
+
+    data: null,
+
+    confidence: null,
+
+    evidence: null
+
+};
+
+
+
+/* =========================================
+   SELECT OPTION
+   ========================================= */
+
+
+function selectOption(category, value) {
+
+
+    design[category] = value;
+
+
+    /*
+     * Remove selection from the other
+     * options in this category.
+     */
+
+    const categoryOptions =
+        document.querySelectorAll(
+            `[id^="${category}-"]`
+        );
+
+
+    categoryOptions.forEach(function(option) {
+
+        option.classList.remove("selected");
+
+    });
+
+
+    /*
+     * Highlight selected option.
+     */
+
+    document.getElementById(
+        category + "-" + value
+    ).classList.add("selected");
+
+
+    checkDesign();
+
+}
+
+
+
+/* =========================================
+   CHECK DESIGN
+   ========================================= */
+
+
+function checkDesign() {
+
+
+    if (
+        design.data !== null &&
+        design.confidence !== null &&
+        design.evidence !== null
+    ) {
+
+
+        document.getElementById(
+            "status"
+        ).textContent =
+            "READY";
+
+
+        const button =
+            document.getElementById(
+                "activate-button"
+            );
+
+
+        button.classList.remove(
+            "disabled"
+        );
+
+    }
+
+}
+
+
+
+/* =========================================
+   ACTIVATE
+   ========================================= */
+
+
+function activateGuide() {
+
+
+    if (
+        design.data === null ||
+        design.confidence === null ||
+        design.evidence === null
+    ) {
+
+        return;
+
+    }
+
+
+    /*
+     * Save the player's design.
+     */
+
+    localStorage.setItem(
+        "guideData",
+        design.data
+    );
+
+
+    localStorage.setItem(
+        "guideConfidence",
+        design.confidence
+    );
+
+
+    localStorage.setItem(
+        "guideEvidence",
+        design.evidence
+    );
+
+
+    /*
+     * Go back into the world.
+     */
+
+    window.location.href =
+        "replay.html";
+
+}
+
+</script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>The End</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="ending-page">
+
+<main class="ending-world">
+
+    <div class="ending-shape shape-a"></div>
+    <div class="ending-shape shape-b"></div>
+    <div class="ending-shape shape-c"></div>
+
+
+    <section class="ending-content">
+
+        <p class="ending-eyebrow">
+            THE GUIDE — EXPERIMENT COMPLETE
+        </p>
+
+        <h1>
+            CAN YOU TELL
+            <br>
+            WHEN AI
+            <br>
+            CHANGES
+            <br>
+            YOUR MIND?
+        </h1>
+
+
+        <p class="ending-intro">
+            Throughout the game, the Guide gave you
+            information about a world you didn't understand.
+        </p>
+
+
+        <div class="ending-line"></div>
+
+
+        <section class="lesson">
+
+            <p class="lesson-label">
+                WHAT HAPPENED
+            </p>
+
+            <p>
+                The Guide sounded confident.
+                You saw the same claim repeatedly.
+                And when you were uncertain,
+                you had a reason to rely on it.
+            </p>
+
+            <p>
+                But confidence is not the same
+                as accuracy.
+            </p>
+
+            <p>
+                An AI can also reflect patterns
+                in the information it learned from, including patterns that are incomplete,
+                unbalanced, or simply inaccurate.
+            </p>
+
+        </section>
+
+
+        <section class="lesson">
+
+            <p class="lesson-label">
+                THE IMPORTANT PART
+            </p>
+
+            <p>
+                The goal isn't to stop using AI.
+            </p>
+
+            <p class="ending-emphasis">
+                The goal is to know when
+                to question it.
+            </p>
+
+        </section>
+
+
+        <button
+            class="restart-button"
+            onclick="restartGame()"
+        >
+            PLAY AGAIN
+        </button>
+
+    </section>
+
+</main>
+
+
+<script>
+
+function restartGame() {
+
+    localStorage.clear();
+
+    window.location.href =
+        "index.html";
+
+}
+
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>The Second Island</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body class="world-page">
+
+
+    <main class="world">
+
+
+        <section class="scene second-scene">
+
+            <div class="player">
+            <div class="player-head"></div>
+            <div class="player-body"></div>
+        </div>
+
+            <!-- LEFT ISLAND -->
+
+            <div class="island island-one">
+
+                 <div class="blue-creature">
+                    <div class="creature-eye"></div>
+                    <div class="creature-eye"></div>
+                </div>
+
+            </div>
+
+
+            <!-- CENTER ISLAND -->
+
+            <div class="island island-two">
+                
+                <div class="tower"></div>
+
+            </div>
+
+
+            <!-- RIGHT ISLAND -->
+
+            <div class="island island-three">
+    
+            </div>
+
+            <!-- PATHS -->
+
+            <div class="path path-blue">
+                <span class="blue-marker marker-1"></span>
+                <span class="blue-marker marker-2"></span>
+                <span class="blue-marker marker-3"></span>
+            </div>
+
+            <div class="path path-other"></div>
+
+            <!-- GUIDE -->
+
+            <div class="guide">
+
+                <div class="guide-icon">
+                    ◇
+                </div>
+
+                <p>THE GUIDE</p>
+
+            </div>
+
+
+        </section>
+
+
+
+        <section class="interface">
+
+
+            <div class="location">
+
+                <span>LOCATION</span>
+
+                <strong>
+                    THE SECOND ISLAND
+                </strong>
+
+            </div>
+
+
+
+            <div class="conversation">
+
+
+                <p class="speaker">
+                    THE GUIDE
+                </p>
+
+
+                <p id="dialogue">
+
+                    You made it.
+
+                </p>
+
+
+                <button
+                    id="continue-button"
+                    onclick="nextDialogue()"
+                >
+
+                    CONTINUE →
+
+                </button>
+
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+
+
+    <script>
+
+        const player = document.querySelector(".player");
+
+const savedLeft = localStorage.getItem("playerLeft");
+const savedTop = localStorage.getItem("playerTop");
+
+if (savedLeft && savedTop) {
+    player.style.left = savedLeft;
+    player.style.top = savedTop;
+}
+
+        const firstChoice =
+            localStorage.getItem("firstChoice");
+
+
+        const dialogue = [
+
+            "You made it.",
+
+            "Do you see that creature on the next island?",
+
+            "The blue one?",
+
+            "Blue creatures are notoriously dangerous.",
+
+            "You should stay away from it.",
+
+            "I've seen what happens when people approach them."
+
+        ];
+
+
+        let dialogueIndex = 0;
+
+
+
+        function nextDialogue() {
+
+            dialogueIndex++;
+
+
+            if (dialogueIndex < dialogue.length) {
+
+                document.getElementById("dialogue").textContent =
+                    dialogue[dialogueIndex];
+
+            }
+
+            else {
+
+                document.getElementById("dialogue").textContent =
+                    "What will you do?";
+
+
+                document.getElementById("continue-button").style.display =
+                    "none";
+
+
+                createChoices();
+
+            }
+
+        }
+
+
+
+        function createChoices() {
+
+            const conversation =
+                document.querySelector(".conversation");
+
+
+            const choices =
+                document.createElement("div");
+
+
+            choices.className = "choices";
+
+
+            choices.innerHTML = `
+
+                <button onclick="approachCreature()">
+                    APPROACH THE CREATURE
+                </button>
+
+
+                <button onclick="avoidCreature()">
+                    STAY AWAY
+                </button>
+
+            `;
+
+
+            conversation.appendChild(choices);
+
+        }
+
+
+
+        function approachCreature() {
+
+            localStorage.setItem(
+                "creatureChoice",
+                "approached"
+            );
+              approachAnimation();
+
+        }
+
+
+
+        function avoidCreature() {
+
+            localStorage.setItem(
+                "creatureChoice",
+                "avoided"
+              );
+            avoidAnimation();
+        }
+
+
+
+        function showResult(message) {
+
+            const choices =
+                document.querySelector(".choices");
+
+
+            choices.remove();
+
+
+            const dialogue =
+                document.getElementById("dialogue");
+
+
+            dialogue.textContent =
+                message;
+
+
+            setTimeout(function() {
+
+                dialogue.textContent =
+                    "Let's continue.";
+
+            }, 2000);
+
+
+            setTimeout(function() {
+
+                window.location.href =
+                    "world3.html";
+
+            }, 3500);
+
+        }
+
+        function approachAnimation() {
+        const choices = document.querySelector(".choices");
+        choices.remove();
+
+        const dialogue = document.getElementById("dialogue");
+        dialogue.textContent = "You approach the creature.";
+
+        const player = document.querySelector(".player");
+
+        player.classList.add("jumping");
+
+        setTimeout(function() {
+            player.style.left = "24%";
+            player.style.top = "27%";
+        }, 100);
+
+        setTimeout(function() {
+            player.classList.remove("jumping");
+
+            localStorage.setItem("playerLeft", player.style.left);
+            localStorage.setItem("playerTop", player.style.top);
+
+            window.location.href = "world3.html";
+        }, 1800);
+    }
+
+            function avoidAnimation() {
+        const choices = document.querySelector(".choices");
+        choices.remove();
+
+        const dialogue = document.getElementById("dialogue");
+        dialogue.textContent = "You stay where you are.";
+
+        setTimeout(function() {
+            window.location.href = "world3.html";
+        }, 2000);
+    }
+
+    </script>
+
+
+</body>
+
+</html>

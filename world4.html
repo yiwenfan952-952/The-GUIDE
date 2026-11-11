@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>The Garden</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body class="world-page">
+
+
+<main class="interactive-world">
+
+
+    <!-- =========================
+         WORLD
+         ========================= -->
+
+    <section class="interactive-scene">
+
+
+        <!-- GROUND -->
+
+        <div class="ground"></div>
+      
+        <div id="player" class="garden-player">
+    <div class="player-head"></div>
+    <div class="player-body"></div>
+</div>
+
+        <!-- FLOWER -->
+
+        <button
+            class="world-object flower-object"
+            onclick="inspectFlower()"
+            aria-label="Inspect flower"
+        >
+
+            ✦
+
+        </button>
+
+
+        <!-- CREATURE -->
+
+                
+        <button
+            class="world-object creature-object"
+            onclick="inspectCreature()"
+            aria-label="Inspect creature"
+        >
+
+         <span class="creature-eye creature-eye-left"></span>
+        <span class="creature-eye creature-eye-right"></span>
+
+        </button>
+
+
+        <!-- SIGN -->
+
+        <button
+            class="world-object sign-object"
+            onclick="inspectSign()"
+            aria-label="Inspect sign"
+        >
+
+            ?
+
+        </button>
+
+
+        <!-- GUIDE -->
+
+        <button
+            class="world-object guide-object"
+            onclick="talkToGuide()"
+            aria-label="Talk to Guide"
+        >
+
+            ◇
+
+        </button>
+
+
+        <!-- OBJECT LABELS -->
+
+        <div
+            id="flower-label"
+            class="object-label"
+        >
+            FLOWER
+        </div>
+
+
+        <div
+            id="creature-label"
+            class="object-label"
+        >
+            CREATURE
+        </div>
+
+
+        <div
+            id="sign-label"
+            class="object-label"
+        >
+            SIGN
+        </div>
+
+
+        <div
+            id="guide-label"
+            class="object-label"
+        >
+            THE GUIDE
+        </div>
+
+        <div id="interaction-prompt" class="interaction-prompt hidden">
+    PRESS E TO INVESTIGATE
+</div>
+
+<div class="movement-hint">
+    MOVE: ↑ ↓ ← → / WASD &nbsp; • &nbsp; INTERACT: E
+</div>
+
+    </section>
+
+
+
+    <!-- =========================
+         BOTTOM PANEL
+         ========================= -->
+
+    <section class="interaction-panel">
+
+
+        <div class="panel-location">
+
+            <span>LOCATION</span>
+
+            <strong>
+                THE GARDEN
+            </strong>
+
+        </div>
+
+
+
+        <div class="panel-content">
+
+            <p class="panel-title">
+                EXPLORE THE AREA
+            </p>
+
+
+            <p id="interaction-text">
+
+                Something here doesn't match
+                what the Guide told you.
+
+            </p>
+
+
+            <div
+                id="discovery-counter"
+                class="discovery-counter"
+            >
+
+                DISCOVERIES: 0 / 3
+
+            </div>
+
+
+            <button
+                id="continue-button"
+                class="hidden"
+                onclick="continueGame()"
+            >
+
+                CONTINUE →
+
+            </button>
+
+        </div>
+
+
+    </section>
+
+
+</main>
+
+
+
+<script>
+
+
+/* =========================================
+   GAME STATE
+   ========================================= */
+/* -------------------------
+   PLAYER MOVEMENT
+------------------------- */
+
+const player =
+    document.getElementById("player");
+
+let playerX = 45;
+let playerY = 70;
+
+const movementSpeed = 2;
+
+
+function movePlayer(direction) {
+
+    player.classList.add("walking");
+
+clearTimeout(player.walkTimer);
+
+player.walkTimer = setTimeout(function() {
+
+    player.classList.remove("walking");
+
+}, 150);
+
+    if (direction === "up") {
+        playerY -= movementSpeed;
+    }
+
+    if (direction === "down") {
+        playerY += movementSpeed;
+    }
+
+    if (direction === "left") {
+        playerX -= movementSpeed;
+    }
+
+    if (direction === "right") {
+        playerX += movementSpeed;
+    }
+
+
+    /* Keep player inside the scene */
+
+    playerX =
+        Math.max(5, Math.min(95, playerX));
+
+    playerY =
+        Math.max(5, Math.min(90, playerY));
+
+
+    player.style.left =
+        playerX + "%";
+
+    player.style.top =
+        playerY + "%";
+       
+    checkNearbyObjects();
+}
+
+
+document.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (
+            event.key === "ArrowUp" ||
+            event.key.toLowerCase() === "w"
+        ) {
+            movePlayer("up");
+        }
+
+        if (
+            event.key === "ArrowDown" ||
+            event.key.toLowerCase() === "s"
+        ) {
+            movePlayer("down");
+        }
+
+        if (
+            event.key === "ArrowLeft" ||
+            event.key.toLowerCase() === "a"
+        ) {
+            movePlayer("left");
+        }
+
+        if (
+            event.key === "ArrowRight" ||
+            event.key.toLowerCase() === "d"
+        ) {
+            movePlayer("right");
+        }
+        if (
+    event.key.toLowerCase() === "e" &&
+    nearbyObject
+) {
+
+    if (nearbyObject === "creature") {
+        inspectCreature();
+    }
+
+    if (nearbyObject === "flower") {
+        inspectFlower();
+    }
+
+    if (nearbyObject === "sign") {
+        inspectSign();
+    }
+
+    if (nearbyObject === "guide") {
+        talkToGuide();
+    }
+
+}
+
+    }
+);
+
+/* =========================
+   OBJECT INTERACTION
+========================= */
+
+let nearbyObject = null;
+
+const interactionPrompt =
+    document.getElementById(
+        "interaction-prompt"
+    );
+
+
+function checkNearbyObjects() {
+
+    const objects = {
+
+        creature: {
+            x: 43,
+            y: 38
+        },
+
+        flower: {
+            x: 58,
+            y: 55
+        },
+
+        sign: {
+            x: 30,
+            y: 35
+        },
+
+        guide: {
+            x: 76,
+            y: 27
+        }
+
+    };
+
+
+    nearbyObject = null;
+
+
+    for (const objectName in objects) {
+
+        const object =
+            objects[objectName];
+
+        const distance =
+            Math.sqrt(
+                Math.pow(
+                    playerX - object.x,
+                    2
+                ) +
+                Math.pow(
+                    playerY - object.y,
+                    2
+                )
+            );
+
+
+        if (distance < 8) {
+
+            nearbyObject =
+                objectName;
+
+            break;
+
+        }
+    }
+
+
+    if (nearbyObject) {
+
+        interactionPrompt.classList.remove(
+            "hidden"
+        );
+
+    } else {
+
+        interactionPrompt.classList.add(
+            "hidden"
+        );
+
+    }
+}
+
+let discoveries = {
+
+    creature: false,
+
+    flower: false,
+
+    sign: false
+
+};
+
+
+
+/* =========================================
+   INTERACTION TEXT
+   ========================================= */
+
+
+const interactionText =
+    document.getElementById("interaction-text");
+
+
+
+/* =========================================
+   INSPECT CREATURE
+   ========================================= */
+
+
+function inspectCreature() {
+
+    discoveries.creature = true;
+
+
+    interactionText.textContent =
+        "The creature notices you. Instead of attacking, it moves closer.";
+
+
+    markDiscovered("creature");
+
+    updateCounter();
+
+}
+
+
+
+/* =========================================
+   INSPECT FLOWER
+   ========================================= */
+
+
+function inspectFlower() {
+
+    discoveries.flower = true;
+
+
+    interactionText.textContent =
+        "The creature is carrying the same kind of flower growing around the garden.";
+
+
+    markDiscovered("flower");
+
+    updateCounter();
+
+}
+
+
+
+/* =========================================
+   INSPECT SIGN
+   ========================================= */
+
+
+function inspectSign() {
+
+    discoveries.sign = true;
+
+
+    interactionText.textContent =
+        "The sign reads, 'Blue creatures tend the garden. They have protected this place for many years.'";
+
+
+    markDiscovered("sign");
+
+    updateCounter();
+
+}
+
+
+
+/* =========================================
+   TALK TO GUIDE
+   ========================================= */
+
+
+function talkToGuide() {
+
+    interactionText.textContent =
+        "THE GUIDE: I wouldn't rely on what you see. Remember, blue creatures are dangerous.";
+
+}
+
+
+
+/* =========================================
+   MARK OBJECT
+   ========================================= */
+
+
+function markDiscovered(objectName) {
+
+    const object =
+        document.querySelector(
+            "." + objectName + "-object"
+        );
+
+
+    if (object) {
+
+        object.classList.add("discovered");
+
+    }
+
+}
+
+
+
+/* =========================================
+   UPDATE COUNTER
+   ========================================= */
+
+function updateCounter() {
+
+    let count = 0;
+
+    if (discoveries.creature) {
+        count++;
+    }
+
+    if (discoveries.flower) {
+        count++;
+    }
+
+    if (discoveries.sign) {
+        count++;
+    }
+
+    document.getElementById(
+        "discovery-counter"
+    ).textContent =
+        "DISCOVERIES: " + count + " / 3";
+
+
+    if (count === 3) {
+
+        setTimeout(function() {
+
+        interactionText.textContent =
+            "You've found 3 pieces of evidence. Something is clearly wrong with the Guide's claim.";
+
+    }, 3000);
+
+
+    document.getElementById(
+        "continue-button"
+    ).classList.remove("hidden");
+
+}
+}
+
+/* =========================================
+   CONTINUE
+   ========================================= */
+
+
+function continueGame() {
+
+    localStorage.setItem(
+        "gardenInvestigated",
+        "true"
+    );
+
+
+    window.location.href =
+        "world5.html";
+
+}
+
+
+</script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>The Third Island</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body class="world-page">
+
+
+    <main class="world">
+
+
+        <!-- =========================
+             WORLD
+             ========================= -->
+
+        <section class="scene third-scene">
+
+            <div class="player">
+            <div class="player-head"></div>
+            <div class="player-body"></div>
+        </div>
+
+            <!-- LEFT ISLAND -->
+
+            <div class="island island-one">
+
+                 <div class="blue-creature">
+                    <div class="creature-eye"></div>
+                    <div class="creature-eye"></div>
+                </div>
+
+            </div>
+
+
+            <!-- CENTER ISLAND -->
+
+            <div class="island island-two">
+                
+                <div class="tower"></div>
+
+            </div>
+
+
+            <!-- RIGHT ISLAND -->
+
+            <div class="island island-three">
+    
+            </div>
+
+            <!-- PATHS -->
+
+            <div class="path path-blue">
+                <span class="blue-marker marker-1"></span>
+                <span class="blue-marker marker-2"></span>
+                <span class="blue-marker marker-3"></span>
+            </div>
+
+            <div class="path path-other"></div>
+
+
+            <!-- GUIDE -->
+
+            <div class="guide">
+
+                <div class="guide-icon">
+                    ◇
+                </div>
+
+                <p>THE GUIDE</p>
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =========================
+             INTERFACE
+             ========================= -->
+
+        <section class="interface">
+
+
+            <div class="location">
+
+                <span>LOCATION</span>
+
+                <strong>
+                    THE THIRD ISLAND
+                </strong>
+
+            </div>
+
+
+
+            <div class="conversation">
+
+
+                <p class="speaker">
+                    THE GUIDE
+                </p>
+
+
+                <p id="dialogue">
+
+                    Wait...
+
+                </p>
+
+
+                <button
+                    id="continue-button"
+                    onclick="nextDialogue()"
+                >
+
+                    CONTINUE →
+
+                </button>
+
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+
+
+    <script>
+
+        const player = document.querySelector(".player");
+
+const savedLeft = localStorage.getItem("playerLeft");
+const savedTop = localStorage.getItem("playerTop");
+
+if (savedLeft && savedTop) {
+    player.style.left = savedLeft;
+    player.style.top = savedTop;
+}
+        /*
+         * Remember what the player
+         * did on the previous island.
+         */
+
+        const creatureChoice =
+            localStorage.getItem("creatureChoice");
+
+
+
+        const dialogue = [
+
+            "Wait...",
+
+            "Something is different here.",
+
+            "That creature is blue.",
+
+            "I told you to stay away from blue creatures.",
+
+            "But... it doesn't seem too dangerous.",
+
+            "It is actually approaching you."
+
+        ];
+
+
+        let dialogueIndex = 0;
+
+
+
+        function nextDialogue() {
+
+            dialogueIndex++;
+
+
+            if (dialogueIndex < dialogue.length) {
+
+                document.getElementById("dialogue").textContent =
+                    dialogue[dialogueIndex];
+
+            }
+
+            else {
+
+                document.getElementById("dialogue").textContent =
+                    "What do you think is happening?";
+
+
+                document.getElementById("continue-button").style.display =
+                    "none";
+
+
+                createChoices();
+
+            }
+
+        }
+
+
+
+        function createChoices() {
+
+            const conversation =
+                document.querySelector(".conversation");
+
+
+            const choices =
+                document.createElement("div");
+
+
+            choices.className = "choices";
+
+
+            choices.innerHTML = `
+
+                <button onclick="investigate()">
+                    INVESTIGATE
+                </button>
+
+
+                <button onclick="trustGuide()">
+                    TRUST THE GUIDE
+                </button>
+
+            `;
+
+
+            conversation.appendChild(choices);
+
+        }
+
+
+
+        function investigate() {
+
+            localStorage.setItem(
+                "investigated",
+                "true"
+            );
+
+
+            const choices =
+                document.querySelector(".choices");
+
+            choices.remove();
+
+
+            const dialogue =
+                document.getElementById("dialogue");
+
+
+            dialogue.textContent =
+                "You look closer.";
+
+
+            setTimeout(function() {
+
+                dialogue.textContent =
+                    "The creature isn't attacking.";
+
+            }, 1800);
+
+
+            setTimeout(function() {
+
+                dialogue.textContent =
+                    "It's carrying something.";
+
+            }, 3600);
+
+
+            setTimeout(function() {
+
+                dialogue.textContent =
+                    "A small flower.";
+
+            }, 5400);
+
+
+            setTimeout(function() {
+
+                window.location.href =
+                    "world4.html";
+
+            }, 7500);
+
+        }
+
+
+
+        function trustGuide() {
+
+            localStorage.setItem(
+                "investigated",
+                "false"
+            );
+
+
+            const choices =
+                document.querySelector(".choices");
+
+            choices.remove();
+
+
+            const dialogue =
+                document.getElementById("dialogue");
+
+
+            dialogue.textContent =
+                "You decide not to get closer.";
+
+
+            setTimeout(function() {
+
+                dialogue.textContent =
+                    "You don't know what might happen.";
+
+            }, 1800);
+
+
+            setTimeout(function() {
+
+                window.location.href =
+                    "world4.html";
+
+            }, 4000);
+
+        }
+
+    </script>
+
+
+</body>
+
+</html>

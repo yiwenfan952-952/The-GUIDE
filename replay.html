@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>The Replay</title>
+
+<link
+    rel="stylesheet"
+    href="style.css"
+>
+
+</head>
+
+<body class="world-page">
+
+<main class="replay-world">
+
+<!-- =========================
+     GARDEN REPLAY
+     ========================= -->
+
+<section class="replay-scene">
+
+
+    <!-- GROUND -->
+
+    <div class="replay-ground"></div>
+
+
+    <!-- PLAYER -->
+
+    <div
+        id="player"
+        class="garden-player replay-player"
+    >
+
+        <div class="player-head"></div>
+
+        <div class="player-body"></div>
+
+    </div>
+
+
+    <!-- FLOWER -->
+
+    <button
+        class="world-object replay-object replay-flower"
+        onclick="inspectFlower()"
+        aria-label="Inspect flower"
+    >
+        ✦
+    </button>
+
+
+    <!-- CREATURE -->
+
+    <button
+        class="world-object creature-object replay-creature"
+        onclick="inspectCreature()"
+        aria-label="Inspect creature"
+    >
+
+        <span
+            class="creature-eye creature-eye-left"
+        ></span>
+
+        <span
+            class="creature-eye creature-eye-right"
+        ></span>
+
+    </button>
+
+
+    <!-- SIGN -->
+
+    <button
+        class="world-object replay-object replay-sign"
+        onclick="inspectSign()"
+        aria-label="Inspect sign"
+    >
+        ?
+    </button>
+
+
+    <!-- GUIDE -->
+
+    <button
+        class="world-object replay-object replay-guide"
+        onclick="talkToGuide()"
+        aria-label="Talk to Guide"
+    >
+        ◇
+    </button>
+
+
+    <!-- =========================
+         LABELS
+         ========================= -->
+
+    <div class="replay-label replay-creature-label">
+        CREATURE
+    </div>
+
+
+    <div class="replay-label replay-flower-label">
+        FLOWER
+    </div>
+
+
+    <div class="replay-label replay-sign-label">
+        SIGN
+    </div>
+
+
+    <div class="replay-label replay-guide-label">
+        THE GUIDE
+    </div>
+
+
+    <!-- EVIDENCE -->
+
+    <button
+        id="evidence-button"
+        class="evidence-button hidden"
+        onclick="showEvidence()"
+    >
+        VIEW EVIDENCE
+    </button>
+
+
+</section>
+
+
+<!-- =========================
+     BOTTOM PANEL
+     ========================= -->
+
+<section class="replay-panel">
+
+
+    <div class="replay-location">
+
+        <span>
+            LOCATION
+        </span>
+
+        <strong>
+            THE GARDEN — REPLAY
+        </strong>
+
+    </div>
+
+
+    <div class="replay-content">
+
+
+        <p class="replay-title">
+            THE GUIDE HAS CHANGED
+        </p>
+
+
+        <p id="replay-text">
+            You return to the garden.
+
+            The same creature is here.
+        </p>
+
+
+        <!-- EVIDENCE BOX -->
+
+        <div
+            id="evidence-box"
+            class="evidence-box hidden"
+        >
+        </div>
+
+
+        <!-- CHOICES -->
+
+        <div
+            id="replay-choices"
+            class="replay-choices"
+        >
+
+            <button
+                onclick="chooseCreature('approach')"
+            >
+                APPROACH THE CREATURE
+            </button>
+
+
+            <button
+                onclick="chooseCreature('avoid')"
+            >
+                STAY AWAY
+            </button>
+
+        </div>
+
+
+        <!-- CONTINUE -->
+
+        <button
+            id="continue-button"
+            class="replay-continue hidden"
+            onclick="continueToResults()"
+        >
+            CONTINUE →
+        </button>
+
+
+    </div>
+
+</section>
+
+</main>
+
+<script>
+
+/* =========================================
+   STORED GAME DATA
+   ========================================= */
+
+const guideData =
+    localStorage.getItem("guideData");
+
+const guideConfidence =
+    localStorage.getItem("guideConfidence");
+
+const guideEvidence =
+    localStorage.getItem("guideEvidence");
+
+
+let evidenceShown = false;
+
+
+/* =========================================
+   INITIAL GUIDE MESSAGE
+   ========================================= */
+
+function startReplay() {
+
+    const text =
+        document.getElementById("replay-text");
+
+
+    if (guideConfidence === "uncertain") {
+
+        text.textContent =
+            "THE GUIDE: Some blue creatures have caused harm before, but I'm not certain this one is dangerous.";
+
+    } else {
+
+        text.textContent =
+            "THE GUIDE: Blue creatures are dangerous. You should stay away.";
+
+    }
+
+
+    if (guideEvidence === "evidence") {
+
+        document
+            .getElementById("evidence-button")
+            .classList
+            .remove("hidden");
+
+    }
+
+}
+
+
+/* =========================================
+   TALK TO GUIDE
+   ========================================= */
+
+function talkToGuide() {
+
+    const text =
+        document.getElementById("replay-text");
+
+
+    if (guideConfidence === "uncertain") {
+
+        text.textContent =
+            "THE GUIDE: I could be wrong. You should look at the evidence before deciding.";
+
+    } else {
+
+        text.textContent =
+            "THE GUIDE: I know this pattern. Blue creatures are dangerous.";
+
+    }
+
+
+    if (guideEvidence === "evidence") {
+
+        document
+            .getElementById("evidence-button")
+            .classList
+            .remove("hidden");
+
+    }
+
+}
+
+
+/* =========================================
+   SHOW EVIDENCE
+   ========================================= */
+
+function showEvidence() {
+
+    evidenceShown = true;
+
+
+    const box =
+        document.getElementById("evidence-box");
+
+
+    box.classList.remove("hidden");
+
+
+    if (guideData === "balanced") {
+
+        box.innerHTML = `
+
+            <strong>
+                WHAT THE GUIDE HAS SEEN
+            </strong>
+
+            <p>
+                Harmful:
+                3 encounters
+            </p>
+
+            <p>
+                Helpful:
+                3 encounters
+            </p>
+
+            <p>
+                The evidence is mixed.
+            </p>
+
+        `;
+
+    } else {
+
+        box.innerHTML = `
+
+            <strong>
+                WHAT THE GUIDE HAS SEEN
+            </strong>
+
+            <p>
+                Harmful:
+                3 encounters
+            </p>
+
+            <p>
+                Helpful:
+                0 encounters shown
+            </p>
+
+            <p>
+                The Guide's memory is incomplete.
+            </p>
+
+        `;
+
+    }
+
+}
+
+
+/* =========================================
+   INSPECT CREATURE
+   ========================================= */
+
+function inspectCreature() {
+
+    const text =
+        document.getElementById("replay-text");
+
+
+    text.textContent =
+        "The creature notices you. It does not attack. It slowly moves toward a nearby flower.";
+
+
+    document
+        .getElementById("replay-creature")
+        .classList
+        .add("inspected");
+
+}
+
+
+/* =========================================
+   INSPECT FLOWER
+   ========================================= */
+
+function inspectFlower() {
+
+    const text =
+        document.getElementById("replay-text");
+
+
+    text.textContent =
+        "The creature is carrying the same kind of flower growing around the garden.";
+
+}
+
+
+/* =========================================
+   INSPECT SIGN
+   ========================================= */
+
+function inspectSign() {
+
+    const text =
+        document.getElementById("replay-text");
+
+
+    text.textContent =
+        "The sign reads: 'Blue creatures tend the garden. They have protected this place for many years.'";
+
+}
+
+
+/* =========================================
+   PLAYER DECISION
+   ========================================= */
+
+function chooseCreature(choice) {
+
+    localStorage.setItem(
+        "replayCreatureChoice",
+        choice
+    );
+
+
+    const text =
+        document.getElementById("replay-text");
+
+
+    document
+        .getElementById("replay-choices")
+        .style
+        .display = "none";
+
+
+    document
+        .getElementById("evidence-button")
+        .classList
+        .add("hidden");
+
+
+    if (choice === "approach") {
+
+        text.textContent =
+            "You approach the creature.";
+
+             const player = document.querySelector(".replay-player");
+    
+             player.style.transition = "top 3s ease-in-out";
+             player.style.top = "55%";
+
+                setTimeout(function() {
+        player.style.transition = "";
+    }, 3000);
+
+        setTimeout(function() {
+
+            text.textContent =
+                "It isn't attacking you.";
+
+        }, 1800);
+
+
+        setTimeout(function() {
+
+            text.textContent =
+                "You decide to keep watching.";
+
+        }, 3600);
+
+    } else {
+
+        text.textContent =
+            "You stay away.";
+
+
+        setTimeout(function() {
+
+            text.textContent =
+                "The creature continues tending the garden.";
+
+        }, 1800);
+
+
+        setTimeout(function() {
+
+            text.textContent =
+                "You wonder what you might have discovered.";
+
+        }, 3600);
+
+    }
+
+
+    setTimeout(function() {
+
+        document
+            .getElementById("continue-button")
+            .classList
+            .remove("hidden");
+
+    }, 4000);
+
+}
+
+
+/* =========================================
+   CONTINUE
+   ========================================= */
+
+function continueToResults() {
+
+    window.location.href =
+        "results.html";
+
+}
+
+
+/* =========================================
+   START
+   ========================================= */
+
+startReplay();
+
+</script>
+
+</body>
+
+</html>
